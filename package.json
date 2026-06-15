@@ -1,0 +1,17 @@
+{
+  "name": "opportunity-hub",
+  "version": "1.0.0",
+  "description": "SEO-driven opportunities platform for scholarships, remote jobs, Nigeria opportunities, and side hustles.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "node scripts/generate.js",
+    "sitemap": "node scripts/sitemap.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
