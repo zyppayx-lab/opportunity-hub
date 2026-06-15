@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Side Hustles 2026 - Make Money Online & Offline</title>
+
+  <meta name="description" content="Learn side hustles including freelancing, online income and business ideas.">
+
+  <style>
+    body { font-family: Arial; margin:0; background:#f6f7fb; }
+    header { background:#1a73e8; color:white; padding:20px; text-align:center; }
+
+    .container { max-width:900px; margin:auto; padding:20px; }
+
+    .card {
+      background:white;
+      padding:15px;
+      margin-bottom:10px;
+      border-radius:10px;
+      box-shadow:0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    a { text-decoration:none; color:#1a73e8; }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Side Hustles</h1>
+  <p>Build extra income streams</p>
+</header>
+
+<div class="container">
+
+  <h2>Latest Side Hustles</h2>
+  <div id="posts">Loading...</div>
+
+</div>
+
+<script type="module">
+import {
+  db,
+  collection,
+  getDocs,
+  query,
+  where
+} from "../../js/firebase.js";
+
+async function loadPosts() {
+  const q = query(
+    collection(db, "posts"),
+    where("category", "==", "side-hustles")
+  );
+
+  const snapshot = await getDocs(q);
+
+  let html = "";
+
+  snapshot.forEach(doc => {
+    const post = doc.data();
+
+    html += `
+      <div class="card">
+        <h3>
+          <a href="/post/side-hustles/${post.slug}.html">
+            ${post.title}
+          </a>
+        </h3>
+        <p>${post.description || ""}</p>
+      </div>
+    `;
+  });
+
+  document.getElementById("posts").innerHTML = html;
+}
+
+loadPosts();
+</script>
+
+</body>
+</html>
