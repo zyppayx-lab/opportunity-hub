@@ -2,33 +2,51 @@ name: Generate SEO Pages
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
- - name: Install dependencies
-  run: npm install
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Generate pages
-        run: node scripts/generate.js
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: npm run generate
+
+      - name: Generate sitemap
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: npm run sitemap
 
       - name: Commit generated files
         run: |
-          git config --global user.name "seo-bot"
-          git config --global user.email "seo-bot@users.noreply.github.com"
-          git add .
-          git commit -m "auto: generate seo pages" || echo "no changes"
-          git push
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add post/ sitemap.xml
+
+          git diff --staged --quiet || git commit -m "chore: auto-generate SEO pages and sitemap"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
