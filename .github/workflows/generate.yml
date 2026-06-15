@@ -1,0 +1,35 @@
+name: Generate SEO Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install firebase-admin
+
+      - name: Generate pages
+        run: node scripts/generate.js
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+
+      - name: Commit generated files
+        run: |
+          git config --global user.name "seo-bot"
+          git config --global user.email "seo-bot@users.noreply.github.com"
+          git add .
+          git commit -m "auto: generate seo pages" || echo "no changes"
+          git push
