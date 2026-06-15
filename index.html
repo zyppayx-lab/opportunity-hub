@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>OpportunityHub - Scholarships, Jobs & Side Hustles in Africa</title>
-  <meta name="description" content="Find scholarships, remote jobs, and side hustles in Nigeria and Africa. Updated daily.">
-  <meta name="keywords" content="scholarships Nigeria, remote jobs Africa, side hustles, make money online">
+  <title>OpportunityHub - Scholarships, Jobs & Side Hustles</title>
+
+  <meta name="description" content="Find scholarships, remote jobs, and side hustles in Nigeria, Africa, and globally. Updated daily.">
 
   <style>
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
+      font-family: Arial;
       background: #f6f7fb;
     }
 
@@ -24,11 +25,11 @@
 
     nav {
       display: flex;
+      gap: 10px;
       justify-content: center;
-      gap: 15px;
+      flex-wrap: wrap;
       background: white;
       padding: 10px;
-      flex-wrap: wrap;
     }
 
     nav a {
@@ -51,10 +52,6 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
-    .card h3 {
-      margin: 0;
-    }
-
     .category {
       font-size: 12px;
       color: gray;
@@ -66,32 +63,64 @@
 
 <header>
   <h1>OpportunityHub</h1>
-  <p>Scholarships • Jobs • Side Hustles • Make Money Online</p>
+  <p>Scholarships • Jobs • Side Hustles</p>
 </header>
 
 <nav>
   <a href="/">Home</a>
-  <a href="/post/nigeria-opportunities/">Nigeria</a>
-  <a href="/post/remote-jobs-nigeria/">Remote Jobs</a>
   <a href="/post/scholarships/">Scholarships</a>
+  <a href="/post/nigeria-opportunities/">Nigeria</a>
+  <a href="/post/remote-jobs/">Remote Jobs</a>
   <a href="/post/side-hustles/">Side Hustles</a>
 </nav>
 
 <div class="container">
-
   <h2>Latest Opportunities</h2>
-
-  <div class="card">
-    <h3>Google Scholarship 2026</h3>
-    <div class="category">Scholarships</div>
-  </div>
-
-  <div class="card">
-    <h3>Remote Customer Support Job</h3>
-    <div class="category">Remote Jobs</div>
-  </div>
-
+  <div id="posts">Loading...</div>
 </div>
+
+<script type="module">
+import {
+  db,
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  limit
+} from "./js/firebase.js";
+
+async function loadPosts() {
+  const q = query(
+    collection(db, "posts"),
+    orderBy("createdAt", "desc"),
+    limit(10)
+  );
+
+  const snapshot = await getDocs(q);
+
+  let html = "";
+
+  snapshot.forEach(doc => {
+    const post = doc.data();
+
+    html += `
+      <div class="card">
+        <div class="category">${post.category}</div>
+        <h3>
+          <a href="/post/${post.category}/${post.slug}.html">
+            ${post.title}
+          </a>
+        </h3>
+        <p>${post.description || ""}</p>
+      </div>
+    `;
+  });
+
+  document.getElementById("posts").innerHTML = html;
+}
+
+loadPosts();
+</script>
 
 </body>
   </html>
