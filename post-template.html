@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <title id="title">Loading...</title>
+
+  <meta name="description" id="desc">
+
+  <style>
+    body { font-family: Arial; margin:0; background:#f6f7fb; }
+    header { background:#1a73e8; color:white; padding:20px; text-align:center; }
+    .container { max-width:800px; margin:auto; background:white; padding:20px; }
+    img { width:100%; border-radius:10px; }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h2>OpportunityHub</h2>
+</header>
+
+<div class="container">
+
+  <h1 id="post-title">Loading...</h1>
+
+  <img id="image" style="display:none;" />
+
+  <div id="content"></div>
+
+</div>
+
+<script type="module">
+import { db, collection, getDocs } from "../js/firebase.js";
+
+const slug = window.location.pathname.split("/").pop().replace(".html","");
+
+async function loadPost() {
+  const snapshot = await getDocs(collection(db, "posts"));
+
+  snapshot.forEach(doc => {
+    const post = doc.data();
+
+    if (post.slug === slug) {
+
+      document.title = post.title;
+      document.getElementById("post-title").innerText = post.title;
+      document.getElementById("desc").content = post.description || "";
+      document.getElementById("content").innerHTML = post.content;
+
+      if (post.imageUrl) {
+        const img = document.getElementById("image");
+        img.src = post.imageUrl;
+        img.style.display = "block";
+      }
+    }
+  });
+}
+
+loadPost();
+</script>
+
+</body>
+</html>
